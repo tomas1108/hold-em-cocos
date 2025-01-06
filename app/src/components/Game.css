@@ -1,0 +1,79 @@
+body {
+  cursor: default;
+  color: #888888;
+  background-color: #171717;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* for firefox */
+  width: 100%;
+  position: absolute;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Remove spin of input type number */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+body,
+canvas,
+div {
+  outline: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -khtml-user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+canvas {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.content {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-flex: auto;
+  flex: auto;
+}
+
+.contentWrap {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#GameDiv,
+#Cocos3dGameContainer,
+#GameCanvas {
+  width: 100%;
+  height: 100%;
+}
+
+#GameDiv {
+  overflow: hidden;
+}
+
+.wrapper {
+  position: relative;
+}
+

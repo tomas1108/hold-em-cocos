@@ -1,0 +1,10 @@
+{
+  "name": "holem",
+  "uuid": "e587a0c7-7247-4771-83cf-1b26aa41774a",
+  "creator": {
+    "version": "3.8.4"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.8.1"
+  }
+}

@@ -1,0 +1,34 @@
+{
+	"config": {
+		"version": "1.0.5",
+		"package": "com.davinchi99.game",
+		"localDataKey": "davinchi99",
+		"localDataIv": "framework",
+		"httpServer": "https://api.davinchi99.com/api",
+		"httpTimeout": 10000,
+		"frameRate": "60",
+		"loadingTimeoutGui": 1000,
+		"webSocketIp": "wss://api.davinchi99.com",
+		"webSocketPort": "",
+		"webSocketHeartTime": 6000,
+		"webSocketReceiveTime": 10000,
+		"webSocketReconnectTimeOut": 3000
+	},
+	"language": {
+		"default": "en",
+		"type": ["en"],
+		"path": {
+			"json": "language/json",
+			"texture": "language/texture",
+			"spine": ""
+		}
+	},
+	"bundle": {
+		"enable": false,
+		"server": "http://localhost",
+		"default": "bundle",
+		"packages": {
+			"bundle": "ea6b9"
+		}
+	}
+}
