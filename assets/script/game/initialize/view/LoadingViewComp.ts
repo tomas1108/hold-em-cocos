@@ -1,16 +1,14 @@
-import { _decorator } from "cc";
+import { _decorator, sys } from "cc";
 import { oops } from "db://oops-framework/core/Oops";
 import { ecs } from "db://oops-framework/libs/ecs/ECS";
 import { CCVMParentComp } from "db://oops-framework/module/common/CCVMParentComp";
 import { UIID } from "../../common/config/GameUIConfig";
-import { sys } from "cc";
-import { GameEvent } from "../../common/config/GameEvent";
 import { smc } from "../../common/ecs/SingletonModuleComp";
 import { ModuleUtil } from "db://oops-framework/module/common/ModuleUtil";
 import { BackgroundViewComp } from "./BackgroundViewComp";
 import { LayoutViewComp } from "./LayoutViewComp";
-import { VM } from "db://oops-framework/libs/model-view/ViewModel";
 import { HomeViewComp } from "./HomeViewComp";
+import { VM } from "db://oops-framework/libs/model-view/ViewModel";
 import { format } from "db://assets/libs/fommater/formatCurrency";
 
 const { ccclass, property } = _decorator;
@@ -29,6 +27,8 @@ export class LoadingViewComp extends CCVMParentComp {
 
 	start() {
 		if (!sys.isNative) {
+			this.handleNavigation(); // Kiểm tra query parameters và điều hướng
+		} else {
 			this.enter();
 		}
 	}
@@ -49,26 +49,26 @@ export class LoadingViewComp extends CCVMParentComp {
 	}
 
 	private async loadCustom() {
-		this.data.prompt = oops.language.getLangByID("로드 중...");
+		this.data.prompt = oops.language.getLangByID("Loading...");
 	}
 
 	private loadGameBundle() {
-		this.data.prompt = oops.language.getLangByID("로드 중...");
+		this.data.prompt = oops.language.getLangByID("Loading...");
 		oops.res.load("game", this.onProgressCallback.bind(this));
 	}
 
 	private loadGameRes() {
-		this.data.prompt = oops.language.getLangByID("로드 중...");
+		this.data.prompt = oops.language.getLangByID("Loading...");
 		oops.res.loadDir("game", this.onProgressCallback.bind(this));
 	}
 
 	private loadGameAudio() {
-		this.data.prompt = oops.language.getLangByID("로드 중...");
+		this.data.prompt = oops.language.getLangByID("Loading...");
 		oops.res.loadDir("audios", this.onProgressCallback.bind(this));
 	}
 
 	private loadTextures() {
-		this.data.prompt = oops.language.getLangByID("로드 중...");
+		this.data.prompt = oops.language.getLangByID("Loading...");
 		oops.res.loadDir(
 			"textures",
 			this.onProgressCallback.bind(this),
@@ -89,7 +89,7 @@ export class LoadingViewComp extends CCVMParentComp {
 	}
 
 	private async onCompleteCallback() {
-		this.data.prompt = oops.language.getLangByID("로드 중...");
+		this.data.prompt = oops.language.getLangByID("Loading...");
 		ModuleUtil.addViewUi(this.ent, BackgroundViewComp, UIID.Background);
 
 		const userId = oops.storage.get("userId");
@@ -113,5 +113,50 @@ export class LoadingViewComp extends CCVMParentComp {
 		}
 
 		await oops.gui.openAsync(UIID.Login);
+	}
+
+	/**
+	 * Kiểm tra query parameters từ URL và điều hướng đến Access Page nếu cần.
+	 */
+	private handleNavigation() {
+		
+		const params = this.getQueryParams();
+		console.log(params);
+
+		
+
+
+		if (params.encryptedData) {
+			oops.gui.openAsync(UIID.Background).then(() => {
+				oops.gui.open(UIID.AccessScreen);
+			});
+
+			// Truyền params vào AccessScreen nếu cần
+			const screenNode = oops.gui.get(UIID.AccessScreen);
+			if (screenNode) {
+				const accessScreen = screenNode.getComponent("AccessScreen");
+				if (accessScreen) {
+					accessScreen.setParams(params); // Giả định bạn có hàm setParams
+				}
+			}
+		} else {
+			// Nếu không có tham số đặc biệt, tiếp tục với logic thông thường
+			this.enter();
+		}
+	}
+
+	/**
+	 * Lấy các query parameters từ URL.
+	 */
+	private getQueryParams(): Record<string, string> {
+		const params: Record<string, string> = {};
+		const queryString = window.location.search; // Lấy phần ?encryptedData=...
+		const urlParams = new URLSearchParams(queryString);
+
+		urlParams.forEach((value, key) => {
+			params[key] = value;
+		});
+
+		return params;
 	}
 }

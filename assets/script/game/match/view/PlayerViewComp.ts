@@ -121,7 +121,7 @@ export class PlayerViewComp extends CCVMParentComp {
 
 								if (!rank || !suit || !id) return;
 								const { path, sprite } = getCardResPath(rank, suit);
-								cardNode.getComponent(CardViewComp).onAdded(id);
+								cardNode.getComponent(CardViewComp).onAdded(player.id, id);
 
 								flipCardToNode(cardNode, 0.5 + index / 2, async () => {
 									await loadResSpriteAtlasToNode(cardNode, path, sprite);
@@ -201,7 +201,7 @@ export class PlayerViewComp extends CCVMParentComp {
 					index === 0 ? participant?.cardOneId : participant?.cardTwoId;
 				if (!rank || !suit || !id) return;
 				const { path, sprite } = getCardResPath(rank, suit);
-				cardNode.getComponent(CardViewComp).onAdded(id);
+				cardNode.getComponent(CardViewComp).onAdded(this.data?.id, id);
 
 				flipCardToNode(cardNode, 0.5 + index / 2, async () => {
 					await loadResSpriteAtlasToNode(cardNode, path, sprite);

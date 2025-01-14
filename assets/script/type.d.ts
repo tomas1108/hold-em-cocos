@@ -181,8 +181,8 @@ declare global {
 		content: string;
 		handName: string;
 		amount: number;
-		bestHand: string[];
-		winnerHand: string[];
+		bestHand: string;
+		winnerHand: string;
 		createdAt: string;
 	}
 

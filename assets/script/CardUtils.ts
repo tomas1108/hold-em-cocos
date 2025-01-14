@@ -59,6 +59,29 @@ export const flipCardToNode = (
 		.start();
 };
 
+const rankMap = {
+	A: "A",
+	"2": "TWO",
+	"3": "THREE",
+	"4": "FOUR",
+	"5": "FIVE",
+	"6": "SIX",
+	"7": "SEVEN",
+	"8": "EIGHT",
+	"9": "NINE",
+	T: "TEN",
+	J: "J",
+	Q: "Q",
+	K: "K",
+};
+
+const suitMap = {
+	H: "HEARTS",
+	D: "DIAMONDS",
+	C: "CLUBS",
+	S: "SPADES",
+};
+
 const rankMapReverse: { [key: string]: string } = {
 	A: "A",
 	TWO: "2",
@@ -194,4 +217,15 @@ export const getStarRating = (card1: string, card2: string): number => {
 	if (sameSuit) cardsString += "s";
 
 	return starRatings[cardsString] || 1;
+};
+
+export const formattedStringToCards = (value: string) => {
+	const cards = value.replace(/[\[\] ']/g, "").split(",");
+
+	return cards.map((card) => {
+		return {
+			rank: rankMap[card[0] as keyof typeof rankMap],
+			suit: suitMap[card[1] as keyof typeof suitMap],
+		};
+	});
 };

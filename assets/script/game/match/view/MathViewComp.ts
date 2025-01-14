@@ -154,7 +154,6 @@ export class MatchViewComp extends CCComp {
 		});
 
 		this.socket.on(PlayerEvent.CHANGE_TURN, (data: IChangeTurnData) => {
-			// TODO must process turn
 			oops.message.dispatchEvent(PlayerEvent.CHANGE_TURN, data);
 			this.changeTurn(this, data);
 		});
@@ -218,6 +217,7 @@ export class MatchViewComp extends CCComp {
 
 				if (!player || !players) return;
 				VM.setValue("Match.highlightCards", playerHighlightSet);
+				oops.message.dispatchEvent(PlayerEvent.HIGHLIGHT_CARDS, data);
 			}
 		});
 

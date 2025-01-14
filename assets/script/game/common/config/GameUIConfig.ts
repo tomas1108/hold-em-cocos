@@ -15,7 +15,7 @@ export enum UIID {
 	Table = 9,
 	Room = 10,
 	Match = 11,
-
+	AccessScreen = 12, // Thêm ID cho AccessScreen
 	Table_Confirm = 100,
 }
 
@@ -46,6 +46,7 @@ export const UIConfigData: { [key: number]: UIConfig } = {
 	[UIID.Table]: { layer: LayerType.UI, prefab: "game/table" },
 	[UIID.Room]: { layer: LayerType.UI, prefab: "game/room" },
 	[UIID.Match]: { layer: LayerType.UI, prefab: "game/match" },
+	[UIID.AccessScreen]: { layer: LayerType.UI, prefab: "gui/action/access" }, // Thêm ID cho AccessScreen
 
 	[UIID.Table_Confirm]: {
 		layer: LayerType.Dialog,

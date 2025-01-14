@@ -12,6 +12,7 @@ import { smc } from "../../common/ecs/SingletonModuleComp";
 import {
 	flipCardToNode,
 	getCardResPath,
+	getStarRating,
 	tweenCardToNode,
 } from "../../../CardUtils";
 import { UITransform } from "cc";
@@ -27,6 +28,7 @@ import type { EventTouch } from "cc";
 import { SpinViewComp } from "./SpinViewComp";
 import { Sprite } from "cc";
 import { WorkerEvent } from "../../../WebWorker";
+import { Label } from "cc";
 
 const { ccclass, property } = _decorator;
 
@@ -53,6 +55,12 @@ export class ToolsViewComp extends CCVMParentComp {
 
 	@property(Node)
 	btnCheck: Node;
+
+	@property(Label)
+	ttl: Label;
+
+	@property(Sprite)
+	stars: Sprite;
 
 	socket: Socket;
 	data: IPlayerData = {
@@ -90,6 +98,7 @@ export class ToolsViewComp extends CCVMParentComp {
 	start() {
 		oops.message.on(PlayerEvent.LEAVE_TABLE, this.handleLeaveTable, this);
 		oops.message.on(PlayerEvent.MATCH_STARTED, this.handleMatchStarted, this);
+		oops.message.on(PlayerEvent.HIGHLIGHT_CARDS, this.handleHighlight, this);
 		oops.message.on(TableEvent.UPDATE_FOLD, this.onUpdateFold, this);
 		oops.message.on(
 			TableEvent.PLAYERS_UPDATED,
@@ -125,6 +134,7 @@ export class ToolsViewComp extends CCVMParentComp {
 		this.turn.active = this.isTurn;
 		this.isClicked = false;
 		this.slind.active = false;
+		this.ttl.string = null;
 
 		this.checkTurn();
 		this.updateSlind(data);
@@ -136,6 +146,7 @@ export class ToolsViewComp extends CCVMParentComp {
 		this.checkKick(data);
 		this.checkFold(data);
 		this.checkWait(data);
+		this.updateStars(data);
 	}
 
 	clearCards() {
@@ -146,7 +157,6 @@ export class ToolsViewComp extends CCVMParentComp {
 				child.destroy();
 			}
 		}
-		console.log("clearCards", this.cards);
 	}
 
 	dealCard() {
@@ -193,7 +203,7 @@ export class ToolsViewComp extends CCVMParentComp {
 			const id = index === 0 ? participant?.cardOneId : participant?.cardTwoId;
 			if (!rank || !suit || !id) return;
 			const { path, sprite } = getCardResPath(rank, suit);
-			cardNode.getComponent(CardViewComp).onAdded(id);
+			cardNode.getComponent(CardViewComp).onAdded(player.id, id);
 
 			flipCardToNode(cardNode, 0.5 + index / 2, async () => {
 				await loadResSpriteAtlasToNode(cardNode, path, sprite);
@@ -576,7 +586,37 @@ export class ToolsViewComp extends CCVMParentComp {
 		}
 	}
 
+	updateStars(data: IUpdatePlayerData) {
+		if (this.stars) {
+			const participant = data.match?.participants.find(
+				(item) => item.playerId === VM.getValue("Match.player").id,
+			) as IParticipant;
+
+			if (participant.cardOne && participant.cardTwo) {
+				const stars = getStarRating(
+					`${participant.cardOne?.rank}_${participant.cardOne?.suit}`,
+					`${participant.cardTwo?.rank}_${participant.cardTwo?.suit}`,
+				);
+				this.stars.spriteFrame = this.stars.spriteAtlas?.getSpriteFrame(
+					`${stars}`,
+				);
+			}
+		}
+	}
+
+	handleHighlight(event: string, data: IHighlightResponse) {
+		if (data.playerHighlightSet && this.ttl) {
+			Object.keys(data.playerHighlightSet).map((key: string) => {
+				if (key === VM.getValue("Match.player").id) {
+					this.ttl.string = data.playerHighlightSet[key].name;
+				}
+			});
+		}
+	}
+
 	onDestroy(): void {
+		oops.message.off(PlayerEvent.LEAVE_TABLE, this.handleLeaveTable, this);
+		oops.message.off(PlayerEvent.HIGHLIGHT_CARDS, this.handleHighlight, this);
 		oops.message.off(PlayerEvent.MATCH_STARTED, this.handleMatchStarted, this);
 		oops.message.off(TableEvent.UPDATE_FOLD, this.onUpdateFold, this);
 		oops.message.off(
